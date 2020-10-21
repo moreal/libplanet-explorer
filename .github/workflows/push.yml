@@ -7,23 +7,21 @@ jobs:
     - uses: actions/checkout@main
     - name: build
       run: dotnet build
-    - name: gcloud-auth
-      uses: actions/gcloud/auth@main
-      env:
-        GCLOUD_AUTH: ${{ secrets.GCLOUD_AUTH }}
+    - name: setup-gcloud
+      uses: GoogleCloudPlatform/github-actions/setup-gcloud@0.1.3
+      with:
+        service_account_key: ${{ secrets.GCLOUD_AUTH }}
     - name: pack
       shell: pwsh
       run: ./build.ps1
     - name: upload
-      uses: actions/gcloud/cli@main
+      run: |
+        gsutil cp -a public-read Libplanet.Explorer.Executable/bin/Release/libplanet-explorer.*.zip
+        "gs://$BUCKET/${{ github.sha }}/"
       env:
         BUCKET: libplanet-explorer
-      with:
-        entrypoint: /bin/sh
-        args: -c "gsutil cp -a public-read Libplanet.Explorer.Executable/bin/Release/libplanet-explorer.*.zip
-          gs://$BUCKET/${{ github.sha }}/"
     - name: share
-      uses: shawnbot/action-status@main
+      uses: shawnbot/action-status@v0.1.1
       env:
         BUCKET: libplanet-explorer
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

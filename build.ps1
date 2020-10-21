@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
 $project = "Libplanet.Explorer.Executable"
-$target = "netcoreapp2.2"
+$target = "netcoreapp3.1"
 $platforms = @("osx-x64","win-x64")
 $results = @()
 foreach ($rid in $platforms) {
